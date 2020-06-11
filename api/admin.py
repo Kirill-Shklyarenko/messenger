@@ -6,7 +6,7 @@ from .models import Account, Message
 # Register your models here.
 @admin.register(Account)
 class UserInstanceAdmin(admin.ModelAdmin):
-    list_display = ('username', 'telegramm', 'viber', 'whatsapp',)
+    list_display = ('username', 'telegram', 'viber', 'whatsapp',)
     # date_hierarchy = 'date_check'
     # list_filter = ('need_check',)
     # fields = ('security', 'shortname',  'emitent_title', )
@@ -20,8 +20,6 @@ class UserInstanceAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageInstanceAdmin(admin.ModelAdmin):
-    list_display = ('account', 'status', 'deffered_time')
-    exclude = ('status', )
-# @admin.register(Messenger)
-# class MessengersInstanceAdmin(admin.ModelAdmin):
-#     list_display = ('msg', 'telegramm', 'viber', 'whatsapp')
+    list_display = ('sender', 'status', 'deferred_time', 'timestamp',)
+    readonly_fields = ('status',)
+    ordering = ['-timestamp']
