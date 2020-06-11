@@ -14,21 +14,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-
-
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100,
-
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.BrowsableAPIRenderer',
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
-}
-
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': True,
+    'JSON_EDITOR': True,
     'SECURITY_DEFINITIONS': {
         'basic': {
             'type': 'basic'
@@ -118,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
