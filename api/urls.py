@@ -13,7 +13,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -22,8 +21,8 @@ from rest_framework import routers
 from .views import UserViewSet, MessageViewSet
 
 router = routers.DefaultRouter()
-router.register(r'user', UserViewSet, basename='user')
-router.register(r'message', MessageViewSet, basename='message')
+router.register(r'users', UserViewSet, basename='users')
+router.register(r'messages', MessageViewSet, basename='messages')
 
 api_info = openapi.Info(
     title="Messenger API",
@@ -35,8 +34,10 @@ api_info = openapi.Info(
 schema_view = get_schema_view()
 
 urlpatterns = [
-    path('api/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('drf/', include(router.urls)),
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+    path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
 ]
