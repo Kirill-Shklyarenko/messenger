@@ -1,33 +1,31 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins, generics, status
+from rest_framework.response import Response
 
 from .models import Account, Message
 from .serializers import UserSerializer, MessageSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(generics.ListAPIView,
+                  viewsets.ViewSet):
     queryset = Account.objects.all()
     serializer_class = UserSerializer
 
-    # @swagger_auto_schema(operation_description='GET /users/')
-    # @action(detail=False, methods=['get'])
-    # def get_all_users(self, request):
-    #     return self.queryset
-    #
-    # @swagger_auto_schema(method='get', operation_description="GET /articles/{id}/image/")
-    # @swagger_auto_schema(method='post', operation_description="POST /articles/{id}/image/")
-    # @action(detail=True, methods=['get', 'post'], parser_classes=(MultiPartParser,))
-    # def image(self, request, id=None):
-    #     breakpoint()
-    #
-    # @swagger_auto_schema(operation_description="PUT /articles/{id}/")
-    # def update(self, request, *args, **kwargs):
-    #     breakpoint()
-    #
-    # @swagger_auto_schema(operation_description="PATCH /articles/{id}/")
-    # def partial_update(self, request, *args, **kwargs):
-    #     breakpoint()
 
-
-class MessageViewSet(viewsets.ModelViewSet):
+class MessageViewSet(generics.ListAPIView,
+                     mixins.CreateModelMixin,
+                     viewsets.ViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    http_method_names = ['get', 'post']
+
+    # @action(detail=False, methods=['post'])
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+
+        new_serializer_data = {
+            "status": serializer.data['status'],
+        }
+        return Response(new_serializer_data, status=status.HTTP_201_CREATED)
