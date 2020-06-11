@@ -20,6 +20,6 @@ class UserInstanceAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageInstanceAdmin(admin.ModelAdmin):
-    list_display = ('sender', 'status', 'deferred_time', 'timestamp',)
+    list_display = ('status', 'deferred_time', 'timestamp',)
     readonly_fields = ('status',)
     ordering = ['-timestamp']

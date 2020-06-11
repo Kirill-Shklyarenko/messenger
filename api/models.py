@@ -24,7 +24,6 @@ class Message(models.Model):
     status = models.PositiveSmallIntegerField(default=1, choices=STATUS)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     message = models.TextField()
-    sender = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='Sender')
     receivers_list = models.ManyToManyField(Account)
 
     timestamp = models.DateTimeField(auto_now_add=True)
