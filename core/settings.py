@@ -15,6 +15,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
     'JSON_EDITOR': True,
     'SECURITY_DEFINITIONS': {
         'basic': {
@@ -23,8 +24,8 @@ SWAGGER_SETTINGS = {
     },
     'VALIDATOR_URL': 'http://localhost:8000',
     'DEFAULT_INFO': 'api.urls.api_info',
-    'LOGIN_URL': 'rest_framework:login',
-    'LOGOUT_URL': 'rest_framework:logout',
+    # 'LOGIN_URL': 'rest_framework:login',
+    # 'LOGOUT_URL': 'rest_framework:logout',
 
 }
 
