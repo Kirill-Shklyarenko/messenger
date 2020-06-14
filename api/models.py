@@ -1,38 +1,39 @@
-import uuid
-
 from django.db import models
 
 
 # Create your models here.
 class Recipient(models.Model):
-    user = models.CharField(primary_key=True, max_length=25, unique=True)
-    telegram = models.SlugField(blank=True, unique=True, null=True)
-    viber = models.SlugField(blank=True, unique=True, null=True)
-    whatsapp = models.SlugField(blank=True, unique=True, null=True)
+    username = models.CharField(max_length=50, default=None)
+    SERVICE = [
+        ('telegram', 'telegram'),
+        ('viber', 'viber'),
+        ('whatsapp', 'whatsapp'),
+    ]
+    service = models.CharField(max_length=10, choices=SERVICE, default=None)
 
     def __str__(self):
-        return self.user
+        return f'{self.username} {self.service}'
+
+    class Meta:
+        unique_together = ('username', 'service',)
 
 
 class Message(models.Model):
+    text = models.TextField()
+    recipients = models.ForeignKey(Recipient, related_name='messages',
+                                   on_delete=models.CASCADE,
+                                   null=False, blank=False)
+
     STATUS = [
         (1, 'New'),
         (2, 'Sended'),
         (3, 'Failed'),
     ]
     status = models.PositiveSmallIntegerField(default=1, choices=STATUS)
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    text = models.TextField()
-    recipient = models.ManyToManyField(Recipient)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
     deferred_time = models.DateTimeField(null=True, blank=True)
-    # telegram = models.BooleanField(default=False)
-    # viber = models.BooleanField(default=False)
-    # whatsapp = models.BooleanField(default=False)
 
     def __str__(self):
         return self.text
 
     class Meta:
-        ordering = ['-timestamp']
+        unique_together = ('text', 'recipients',)

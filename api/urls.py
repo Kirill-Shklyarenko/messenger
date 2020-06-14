@@ -3,15 +3,15 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import routers
 
-from .views import MessageViewSet, UserViewSet
+from .views import MessageViewSet, RecipientViewSet
 
 router = routers.DefaultRouter()
-router.register(r'recipient', UserViewSet, basename='recipient')
+router.register(r'recipients', RecipientViewSet, basename='recipients')
 router.register(r'message', MessageViewSet, basename='message')
 
 api_info = openapi.Info(
     title="Messenger API",
-    default_version='v1',
+    default_version='v1.0.0',
     description="""
     
     #### Useful links:
