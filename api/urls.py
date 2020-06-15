@@ -3,10 +3,10 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import routers
 
-from .views import MessageViewSet, RecipientViewSet
+from .views import MessageViewSet
 
 router = routers.DefaultRouter()
-router.register(r'recipients', RecipientViewSet, basename='recipients')
+# router.register(r'recipients', RecipientViewSet, basename='recipients')
 router.register(r'message', MessageViewSet, basename='message')
 
 api_info = openapi.Info(
