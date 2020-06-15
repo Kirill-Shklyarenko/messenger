@@ -25,9 +25,9 @@ class Message(models.Model):
                                    null=False, blank=False)
 
     STATUS = [
-        (1, 'New'),
-        (2, 'Sended'),
-        (3, 'Failed'),
+        (1, 'NEW'),
+        (2, 'DELIVERED'),
+        (3, 'FAILED'),
     ]
     status = models.PositiveSmallIntegerField(default=1, choices=STATUS)
     deferred_time = models.DateTimeField(null=True, blank=True)
