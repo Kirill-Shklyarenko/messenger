@@ -30,10 +30,16 @@ SWAGGER_SETTINGS = {
     },
     'VALIDATOR_URL': 'http://localhost:8000',
     'DEFAULT_INFO': 'api.urls.api_info',
-    # 'LOGIN_URL': 'rest_framework:login',
-    # 'LOGOUT_URL': 'rest_framework:logout',
 
 }
+
+# CELERY STUFF
+broker_url = 'amqp://guest:guest@localhost:5672//'
+result_backend = 'rpc://'
+
+accept_content = ['application/json']
+task_serializer = 'json'
+result_serializer = 'json'
 
 INSTALLED_APPS = [
     'api',
@@ -47,6 +53,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'drf_yasg',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
