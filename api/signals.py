@@ -7,10 +7,6 @@ from .tasks import send_message_task
 
 
 @receiver(post_save, sender=Message, dispatch_uid='send_message')
-def send_message(sender, instance, created, **kwargs):
-    print()
+def send_message(instance, created, **kwargs):  # noqa
     if instance.deferred_time is None and created:
-        print('Celery task is running')
         transaction.on_commit(lambda: send_message_task.apply_async(args=(instance.pk,)))
-
-
