@@ -37,13 +37,24 @@ class MessageViewSet(viewsets.ViewSet,
     http_method_names = ['post']
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data,
-                                         many=isinstance(request.data, list))
+        # Check if recipients is a list
+        if isinstance(request.data['recipients'], list):
+            recipients = request.data.pop('recipients')
+            models = []
+            for recipient in recipients:
+                # validate each model with one recipient at a time
+                request.data['recipients'] = recipient
+                serializer = MessageSerializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                models.append(serializer)
+            # Save it only after all recipients are valid.
+            # To avoid situations when one recipient has wrong id
+            # And you already save previous
+            saved_models = [model.save() for model in models]
+            result_serializer = MessageSerializer(saved_models, many=True)
+            return Response(result_serializer.data)
+        # Save message as usual
+        serializer = MessageSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        response = {
-            "message_text": serializer.validated_data['text'],
-            "message_recipients": serializer.validated_data['recipients'],
-            "message_status": "NEW",
-        }
-        return Response(response, status=status.HTTP_201_CREATED)
+        serializer.save()
+        return Response(serializer.data)
