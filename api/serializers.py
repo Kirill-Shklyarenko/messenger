@@ -10,14 +10,14 @@ class RecipientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipient
         fields = ('id', 'username', 'service')
-        # validators = [
-        #     serializers.UniqueTogetherValidator(
-        #         queryset=model.objects.all(),
-        #         fields=('id', 'username', 'service'),
-        #         message=f"This user is exist"
-        #                 f"Unique constraint Failed in RecipientSerializer"
-        #     )
-        # ]
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=('id', 'username', 'service'),
+                message=f"This user is exist"
+                        f"Unique constraint Failed in RecipientSerializer"
+            )
+        ]
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -33,4 +33,6 @@ class MessageSerializer(serializers.ModelSerializer):
         recipient_validated_data = validated_data.pop('recipients')
         recipient = Recipient.objects.get_or_create(**recipient_validated_data)
         validated_data.update(dict(recipients=recipient[0]))
+        if recipient[0].service == 'viber':
+            validated_data.update(dict(status=3))  # <-------- This for Fail case
         return Message.objects.create(**validated_data)
