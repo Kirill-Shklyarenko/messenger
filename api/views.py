@@ -1,6 +1,5 @@
 from django.db import IntegrityError
 from rest_framework import viewsets, generics, status
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
@@ -31,17 +30,17 @@ def custom_exception_handler(exc, context):
 
 
 class MessageViewSet(viewsets.ViewSet,
-                     generics.ListAPIView,
+                     generics.CreateAPIView,
                      ):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     http_method_names = ['post']
 
-    @action(detail=False, methods=['post'])
-    def sendmsg(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data,
+                                         many=isinstance(request.data, list))
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        self.perform_create(serializer)
         response = {
             "message_text": serializer.validated_data['text'],
             "message_recipients": serializer.validated_data['recipients'],
