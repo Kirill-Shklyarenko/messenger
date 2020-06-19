@@ -1,6 +1,5 @@
 from django.db import IntegrityError
 from rest_framework import viewsets, generics, status
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
@@ -31,20 +30,31 @@ def custom_exception_handler(exc, context):
 
 
 class MessageViewSet(viewsets.ViewSet,
-                     generics.ListAPIView,
+                     generics.CreateAPIView,
                      ):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     http_method_names = ['post']
 
-    @action(detail=False, methods=['post'])
-    def sendmsg(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        # Check if recipients is a list
+        if isinstance(request.data['recipients'], list):
+            recipients = request.data.pop('recipients')
+            models = []
+            for recipient in recipients:
+                # validate each model with one recipient at a time
+                request.data['recipients'] = recipient
+                serializer = MessageSerializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                models.append(serializer)
+            # Save it only after all recipients are valid.
+            # To avoid situations when one recipient has wrong id
+            # And you already save previous
+            saved_models = [model.save() for model in models]
+            result_serializer = MessageSerializer(saved_models, many=True)
+            return Response(result_serializer.data)
+        # Save message as usual
+        serializer = MessageSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        response = {
-            "message_text": serializer.validated_data['text'],
-            "message_recipients": serializer.validated_data['recipients'],
-            "message_status": "NEW",
-        }
-        return Response(response, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)

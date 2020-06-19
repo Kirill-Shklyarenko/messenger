@@ -22,29 +22,17 @@ class RecipientSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=True)
-    recipients = RecipientSerializer(many=True, required=True)
-    deferred_time = serializers.DateTimeField(required=False)
+    recipients = RecipientSerializer(required=True)
+    deferred_time = serializers.DateTimeField(required=False, allow_null=True)
 
     class Meta:
         model = Message
         fields = ('text', 'recipients', 'deferred_time',)
-        # validators = [
-        #     serializers.UniqueTogetherValidator(
-        #         queryset=model.objects.all(),
-        #         fields=('text', 'recipients'),
-        #         message=(f'You want to send '
-        #                  f'SAME MESSAGE to the SAME USERS. '
-        #                  f'Sorry, but You can’t do this...')
-        #     )
-        # ]
 
     def create(self, validated_data):
-        message = None
-        recipients = validated_data.pop('recipients')
-        for recipient_data in recipients:
-            recipients = Recipient.objects.get_or_create(**recipient_data)
-            validated_data.update(dict(recipients=recipients[0]))
-            if recipient_data['service'] == 'viber':
-                validated_data.update(dict(status=3))  # <-------- This for Fail case
-            message = Message.objects.create(**validated_data)
-        return message
+        recipient_validated_data = validated_data.pop('recipients')
+        recipient = Recipient.objects.get_or_create(**recipient_validated_data)
+        validated_data.update(dict(recipients=recipient[0]))
+        if recipient[0].service == 'viber':
+            validated_data.update(dict(status=3))  # <-------- This for Fail case
+        return Message.objects.create(**validated_data)

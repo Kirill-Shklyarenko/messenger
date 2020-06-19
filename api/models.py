@@ -9,7 +9,7 @@ class Recipient(models.Model):
         ('viber', 'viber'),
         ('whatsapp', 'whatsapp'),
     ]
-    service = models.CharField(max_length=10, choices=SERVICE, default=None)
+    service = models.CharField(max_length=8, choices=SERVICE, default=None)
 
     def __str__(self):
         return f'{self.username} {self.service}'
