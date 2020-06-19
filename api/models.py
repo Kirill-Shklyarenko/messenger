@@ -3,13 +3,13 @@ from django.db import models
 
 # Create your models here.
 class Recipient(models.Model):
-    username = models.CharField(max_length=50, default=None)
+    username = models.CharField(max_length=50, null=False, blank=False)
     SERVICE = [
         ('telegram', 'telegram'),
         ('viber', 'viber'),
         ('whatsapp', 'whatsapp'),
     ]
-    service = models.CharField(max_length=8, choices=SERVICE, default=None)
+    service = models.CharField(max_length=8, choices=SERVICE, null=False, blank=False)
 
     def __str__(self):
         return f'{self.username} {self.service}'
