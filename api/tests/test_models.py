@@ -24,7 +24,7 @@ class RecipientModel(TestCase):
 
     def test_recipient_representation(self):
         recipient = Recipient.objects.get(id=1)
-        expected_object_name = f'{recipient.username} {recipient.service}'
+        expected_object_name = f'{recipient.username} | {recipient.service}'
         self.assertEquals(expected_object_name, str(recipient))
 
 

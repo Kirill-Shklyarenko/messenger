@@ -42,7 +42,7 @@ task_serializer = 'json'
 result_serializer = 'json'
 
 INSTALLED_APPS = [
-    'api',
+    'api.apps.ApiConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',

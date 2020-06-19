@@ -12,7 +12,7 @@ class Recipient(models.Model):
     service = models.CharField(max_length=8, choices=SERVICE, null=False, blank=False)
 
     def __str__(self):
-        return f'{self.username} {self.service}'
+        return f'{self.username} | {self.service}'
 
     class Meta:
         unique_together = ('username', 'service',)
