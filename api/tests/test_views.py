@@ -105,5 +105,4 @@ class CreateNewMessageTest(APITestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # 2 - cause 2 message objects for each recipient
         self.assertEqual(Message.objects.count(), 0)
