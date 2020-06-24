@@ -1,4 +1,4 @@
-import datetime as dt
+from datetime import datetime
 
 import pytz
 from celery import shared_task, states
@@ -30,18 +30,15 @@ def send_message_task(self, message_pk):
              ignore_result=True)
 @transaction.non_atomic_requests
 def message_checker_task(self):
-    utc = pytz.UTC
-    for message in Message.objects.all():
-        if message.status != 2:
-            if message.deferred_time:
-                deffered_time = message.deferred_time.replace(second=0, microsecond=0,
-                                                              tzinfo=utc)
-                datetime_now = dt.datetime.now().replace(second=0, microsecond=0, tzinfo=utc)
-                if deffered_time <= datetime_now:
-                    send_message_task.apply_async(args=(message.pk,))
-                    self.update_state(state=states.PENDING, info=None)
-            else:
+    for message in Message.objects.filter(status__in=[1, 3]):
+        if message.deferred_time:
+            deffered_time = message.deferred_time.replace(second=0, microsecond=0)
+            datetime_now = datetime.now(pytz.utc).replace(second=0, microsecond=0)
+            if deffered_time <= datetime_now:
                 send_message_task.apply_async(args=(message.pk,))
                 self.update_state(state=states.PENDING, info=None)
+        else:
+            send_message_task.apply_async(args=(message.pk,))
+            self.update_state(state=states.PENDING, info=None)
     self.update_state(state=states.SUCCESS)
     return 'SUCCESS'
