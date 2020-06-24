@@ -9,16 +9,17 @@ from .models import Message
 
 @shared_task(bind=True,
              name='Send Message',
-             soft_time_limit=5,
              ignore_result=True,
              default_retry_delay=30 * 60,  # retry in 30 minutes
-             autoretry_for=(Exception,), retry_backoff=True, retry_kwargs={'max_retries': 5})
-def send_message_task(self, message_pk):  # noqa
+             autoretry_for=(Exception,),
+             retry_backoff=True,
+             retry_kwargs={'max_retries': 5})
+@transaction.non_atomic_requests
+def send_message_task(self, message_pk):
+    self.update_state(state=states.PENDING, info=None)
     message = Message.objects.get(pk=message_pk)
-    print(f'Try to send {message} with STATUS = {message.status}')
     message.status = 2
     message.save()
-    print(f'{message} DELIVERED')
     self.update_state(state=states.SUCCESS)
     return 'SUCCESS'
 
@@ -28,7 +29,7 @@ def send_message_task(self, message_pk):  # noqa
              time_limit=60,
              ignore_result=True)
 @transaction.non_atomic_requests
-def message_checker_task(self):  # noqa
+def message_checker_task(self):
     utc = pytz.UTC
     for message in Message.objects.all():
         if message.status != 2:
