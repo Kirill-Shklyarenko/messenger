@@ -8,14 +8,9 @@ from .serializers import MessageSerializer
 
 
 def custom_exception_handler(exc, context):
-    # Call REST framework's default exception handler first,
-    # to get the standard error response.
     response = exception_handler(exc, context)
-
-    # Now add the HTTP status code to the response.
     if response is not None:
         response.data['status_code'] = response.status_code
-
     if isinstance(exc, IntegrityError) and not response:
         response = Response(
             {
@@ -25,7 +20,6 @@ def custom_exception_handler(exc, context):
             },
             status=status.HTTP_400_BAD_REQUEST
         )
-
     return response
 
 
@@ -37,6 +31,54 @@ class MessageViewSet(viewsets.ViewSet,
     http_method_names = ['post']
 
     def create(self, request, *args, **kwargs):
+        """
+        - Example for multiple recipients:
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ...
+        "recipients": [
+            {
+              "username": "Jhon",
+              "service": "telegram"
+            },
+            {
+              "username": "Snow",
+              "service": "viber"
+            }
+          ],
+        ...
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        - Example for single recipient:
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ...
+        "recipients": [
+            {
+              "username": "Jhon",
+              "service": "telegram"
+            }
+          ],
+        ...
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        - Or without `[]`:
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ...
+        "recipients": {
+            "username": "Snow",
+            "service": "whatsapp"
+          },
+        ...
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        - If no need `deferred_time` just delete string that contains it :
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        {
+        ...
+        "recipients": {
+            "username": "Snow",
+            "service": "whatsapp"
+          }
+        }
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        """
+
         # Check if recipients is a list
         if isinstance(request.data['recipients'], list):
             recipients = request.data.pop('recipients')

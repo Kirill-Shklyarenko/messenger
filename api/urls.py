@@ -13,43 +13,6 @@ api_info = openapi.Info(
     =============
     - [Admin](admin/)
     
-    Note!
-    -----
-    - Example for multiple recipients:
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ...
-    "recipients": [
-      {
-        "username": "Jhon",
-        "service": "telegram"
-      },
-      {
-        "username": "Snow",
-        "service": "viber"
-      }
-    ],
-    ...
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - Example for single recipient:
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ...
-    "recipients": [
-        {
-          "username": "Jhon",
-          "service": "telegram"
-        }
-      ],
-    ...
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - Or without []:
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ...
-    "recipients": {
-        "username": "Snow",
-        "service": "whatsapp"
-      },
-    ...
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     """,
     contact=openapi.Contact(email="shklyara94@gmail.com"),
 )
