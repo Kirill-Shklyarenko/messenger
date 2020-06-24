@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: "rabbitmq:3.8.5-management-alpine"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  api:
+    container_name: api
+    build: .
+    volumes:
+      - .:/karuna
+    ports:
+      - "8000:8000"
+    command: bash -c "python manage.py makemigrations api && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  celery:
+    container_name: celery
+    build: .
+    volumes:
+      - .:/karuna
+    command: celery -A core worker -l info
+    depends_on:
+      - rabbitmq
+
+  celery-beat:
+    container_name: celery-beat
+    build: .
+    volumes:
+      - .:/karuna
+    command: celery -A core beat -l info
+    depends_on:
+      - rabbitmq

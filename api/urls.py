@@ -1,22 +1,17 @@
-from django.urls import path, include
+from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
-from rest_framework import routers
 
 from .views import MessageViewSet
-
-router = routers.DefaultRouter()
-# router.register(r'recipients', RecipientViewSet, basename='recipients')
-router.register(r'message', MessageViewSet, basename='message')
 
 api_info = openapi.Info(
     title="Messenger API",
     default_version='v1.0.0',
     description="""
     
-    #### Useful links:
+    Useful links:
+    =============
     - [Admin](admin/)
-    - [Clean DRF](api/)
     
     """,
     contact=openapi.Contact(email="shklyara94@gmail.com"),
@@ -25,9 +20,7 @@ api_info = openapi.Info(
 schema_view = get_schema_view()
 
 urlpatterns = [
-    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('api/', include(router.urls)),
-    # path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='swagger'),
+    path('api/sendmsg/', MessageViewSet.as_view({'post': 'create'}), name='sendmsg')
 
 ]

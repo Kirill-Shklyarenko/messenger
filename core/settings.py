@@ -34,15 +34,14 @@ SWAGGER_SETTINGS = {
 }
 
 # CELERY STUFF
-broker_url = 'amqp://guest:guest@localhost:5672//'
-result_backend = 'rpc://'
-
-accept_content = ['application/json']
-task_serializer = 'json'
-result_serializer = 'json'
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 INSTALLED_APPS = [
-    'api',
+    'api.apps.ApiConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
